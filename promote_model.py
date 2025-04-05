@@ -25,14 +25,7 @@ stage = "Staging"
 client = MlflowClient()
 
 # get the latest version of model in staging
-latest_versions = client.search_model_versions(
-    f"name='{registered_model_name}' and current_stage='{stage}'",
-    max_results=1
-)
-
-if not latest_versions:
-    raise ValueError(f"No model versions found for {registered_model_name} in {stage} stage")
-
+latest_versions = client.get_latest_versions(name=registered_model_name,stages=[stage])
 latest_model_version_staging = latest_versions[0].version
 
 # promotion stage
