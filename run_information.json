@@ -1,0 +1,5 @@
+{
+    "run_id": "e6f13dce284841c9a14f75ebd8e9d20e",
+    "artifact_path": "demand_prediction",
+    "model_uri": "runs:/e6f13dce284841c9a14f75ebd8e9d20e/demand_prediction"
+}
