@@ -50,10 +50,10 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ap-south-1
 
-      - name: Create ECR Repository if it doesn't exist
-        run: |
-          aws ecr describe-repositories --repository-names uber_demand_price_pridiction || \
-          aws ecr create-repository --repository-name uber_demand_price_pridiction
+      # - name: Create ECR Repository if it doesn't exist
+      #   run: |
+      #     aws ecr describe-repositories --repository-names uber_demand_price_pridiction || \
+      #     aws ecr create-repository --repository-name uber_demand_price_pridiction
 
       - name: Login to Amazon ECR
         id: login-ecr
