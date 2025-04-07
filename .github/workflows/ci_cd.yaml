@@ -13,7 +13,7 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.12.7'
-          cache: 'pip' 
+          cache: 'pip'
 
       - name: Install Packages
         run: |
@@ -56,11 +56,16 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ap-south-1
-       
+
+      - name: Create ECR Repository if it doesn't exist
+        run: |
+          aws ecr describe-repositories --repository-names uber_demand_price_pridiction || \
+          aws ecr create-repository --repository-name uber_demand_price_pridiction
+
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
-  
+
       - name: Build, tag, and push docker image to Amazon ECR
         env:
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
@@ -69,5 +74,3 @@ jobs:
         run: |
           docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
           docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
-
-   
