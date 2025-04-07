@@ -43,12 +43,12 @@ jobs:
         run: |
           pytest tests/test_model_performance.py
 
-      - name: Promote Model
-        if: success()
-        env:
-          DAGSHUB_USER_TOKEN: ${{ secrets.DAGSHUB_TOKEN }}
-        run: |
-          python promote_model.py
+      # - name: Promote Model
+      #   if: success()
+      #   env:
+      #     DAGSHUB_USER_TOKEN: ${{ secrets.DAGSHUB_TOKEN }}
+      #   run: |
+      #     python promote_model.py
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
