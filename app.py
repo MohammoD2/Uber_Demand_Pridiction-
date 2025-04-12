@@ -15,7 +15,7 @@ st.set_page_config(page_title="Uber Demand Prediction", page_icon="🌆")
 dagshub.init(repo_owner=st.secrets["DAGSHUB"]["USERNAME"],
              repo_name='Uber_Demand_Pridiction-',
              mlflow=True)
-mlflow.set_tracking_uri(f"https://dagshub.com/{st.secrets['DAGSHUB']['USERNAME']}/Uber_Demand_Pridiction-.mlflow")
+mlflow.set_tracking_uri(f"https://dagshub.com/MohammoD2/Uber_Demand_Pridiction-.mlflow")
 
 # Model name and version
 registered_model_name = 'uber_demand_prediction_model'
