@@ -12,3 +12,5 @@ mlflow
 dagshub
 pytest
 gdown
+folium 
+streamlit-folium 
