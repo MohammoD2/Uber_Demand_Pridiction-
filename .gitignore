@@ -94,3 +94,32 @@ models
 
 venv
 /run_information.json
+
+# Model files
+*.joblib
+*.pkl
+*.h5
+*.hdf5
+*.model
+*.weights
+
+# Data files
+*.csv
+*.json
+*.xml
+*.xlsx
+*.xls
+
+# Virtual Environment
+venv/
+ENV/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
