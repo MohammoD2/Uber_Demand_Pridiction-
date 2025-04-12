@@ -8,6 +8,8 @@ import os
 from pathlib import Path
 from sklearn.pipeline import Pipeline
 from time import sleep
+import folium
+from streamlit_folium import folium_static
 
 # Page config
 st.set_page_config(page_title="Uber Demand Prediction", page_icon="🌆")
@@ -128,6 +130,40 @@ if date and time:
         ('reg', model)
     ])
 
+    # Add region names mapping (based on NYC neighborhoods)
+    REGION_NAMES = {
+        0: "Upper West Side",
+        1: "Upper East Side",
+        2: "Midtown West",
+        3: "Midtown East",
+        4: "Chelsea",
+        5: "Gramercy",
+        6: "Greenwich Village",
+        7: "SoHo",
+        8: "Tribeca",
+        9: "Financial District",
+        10: "East Village",
+        11: "Lower East Side",
+        12: "East Harlem",
+        13: "Central Harlem",
+        14: "Morningside Heights",
+        15: "Hamilton Heights",
+        16: "Washington Heights",
+        17: "Inwood",
+        18: "Roosevelt Island",
+        19: "Battery Park",
+        20: "Chinatown",
+        21: "NoHo",
+        22: "Civic Center",
+        23: "Little Italy",
+        24: "Nolita",
+        25: "Two Bridges",
+        26: "Stuyvesant Town",
+        27: "Kips Bay",
+        28: "Murray Hill",
+        29: "Tudor City"
+    }
+
     # Show complete NYC map
     if map_type == "Complete NYC Map":
         progress_bar = st.progress(value=0, text="Loading map...")
@@ -135,9 +171,30 @@ if date and time:
             sleep(0.01)
             progress_bar.progress(i + 1, text="Loading map...")
 
-        st.map(df_plot, latitude="pickup_latitude", 
-               longitude="pickup_longitude", size=0.01,
-               color="color")
+        # Create a Folium map centered on NYC
+        m = folium.Map(location=[40.7831, -73.9712], zoom_start=12)
+
+        # Add all regions as circles
+        for _, row in df_plot.iterrows():
+            color = region_colors.get(row["region"], "#000000")
+            folium.CircleMarker(
+                location=[row["pickup_latitude"], row["pickup_longitude"]],
+                radius=3,
+                color=color,
+                fill=True,
+                popup=f"Region: {REGION_NAMES.get(row['region'], f'Region {row['region']}')}",
+            ).add_to(m)
+
+        # Add current location with a special marker
+        if 'lat' in locals() and 'long' in locals():
+            folium.Marker(
+                location=[lat, long],
+                popup=f"Your Location<br>Region: {REGION_NAMES.get(region, f'Region {region}')}",
+                icon=folium.Icon(color='red', icon='info-sign')
+            ).add_to(m)
+
+        # Display the map
+        folium_static(m)
         progress_bar.empty()
 
         # Predict demand
@@ -146,17 +203,33 @@ if date and time:
             target = input_data["total_pickups"]
             predictions = pipe.predict(input_data.drop(columns=["total_pickups"]))
 
-            # Map Legend
-            st.markdown("### Map Legend")
+            # Enhanced Map Legend with Region Names
+            st.markdown("### Region Information")
+            
+            # Current Region Highlight
+            if 'region' in locals():
+                st.markdown(f"""
+                #### 📍 Your Current Location
+                - **Region Name:** {REGION_NAMES.get(region, f'Region {region}')}
+                - **Region ID:** {region}
+                - **Coordinates:** ({lat:.4f}, {long:.4f})
+                """)
+                st.markdown("---")
+
+            st.markdown("### All Regions")
             for i in range(len(predictions)):
                 region_id = input_data.iloc[i]["region"]
                 demand = int(predictions[i])
                 color = region_colors.get(region_id, "#000000")
-                label = f"{region_id} (Current region)" if region == region_id else f"{region_id}"
+                region_name = REGION_NAMES.get(region_id, f"Region {region_id}")
+                is_current = region == region_id
+                
                 st.markdown(
-                    f'<div style="display: flex; align-items: center;">'
-                    f'<div style="background-color:{color}; width: 20px; height: 10px; margin-right: 10px;"></div>'
-                    f'Region ID: {label} <br> Demand: {demand} <br><br>',
+                    f'<div style="display: flex; align-items: center; margin-bottom: 10px;">'
+                    f'<div style="background-color:{color}; width: 20px; height: 20px; margin-right: 10px; border-radius: 50%;"></div>'
+                    f'<div><strong>{region_name}</strong> {" (Current Location)" if is_current else ""}<br>'
+                    f'Region ID: {region_id}<br>'
+                    f'Predicted Demand: {demand}</div></div>',
                     unsafe_allow_html=True
                 )
         else:
