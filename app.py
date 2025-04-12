@@ -12,27 +12,27 @@ from time import sleep
 # Page config
 st.set_page_config(page_title="Uber Demand Prediction", page_icon="🌆")
 
-# Inject DAGSHUB_TOKEN for MLflow authorization
-os.environ["DAGSHUB_TOKEN"] = st.secrets["DAGSHUB"]["TOKEN"]
+# # Inject DAGSHUB_TOKEN for MLflow authorization
+# os.environ["DAGSHUB_TOKEN"] = st.secrets["DAGSHUB"]["TOKEN"]
 
-# DagsHub MLflow authorization
-dagshub.init(
-    repo_owner=st.secrets["DAGSHUB"]["USERNAME"],
-    repo_name='Uber_Demand_Pridiction-',
-    mlflow=True
-)
-mlflow.set_tracking_uri(f"https://dagshub.com/{st.secrets['DAGSHUB']['USERNAME']}/Uber_Demand_Pridiction-.mlflow")
+# # DagsHub MLflow authorization
+# dagshub.init(
+#     repo_owner=st.secrets["DAGSHUB"]["USERNAME"],
+#     repo_name='Uber_Demand_Pridiction-',
+#     mlflow=True
+# )
+# mlflow.set_tracking_uri(f"https://dagshub.com/{st.secrets['DAGSHUB']['USERNAME']}/Uber_Demand_Pridiction-.mlflow")
 
-# Load model from MLflow
-registered_model_name = 'uber_demand_prediction_model'
-stage = "Production"
-model_path_registry = f"models:/{registered_model_name}/{stage}"
+# # Load model from MLflow
+# registered_model_name = 'uber_demand_prediction_model'
+# stage = "Production"
+# model_path_registry = f"models:/{registered_model_name}/{stage}"
 
-try:
-    mlflow_model = mlflow.sklearn.load_model(model_path_registry)
-    st.success("✅ Successfully authorized and loaded the ML model from DagsHub.")
-except Exception as e:
-    st.error(f"❌ Failed to load model: {e}")
+# try:
+#     mlflow_model = mlflow.sklearn.load_model(model_path_registry)
+#     st.success("✅ Successfully authorized and loaded the ML model from DagsHub.")
+# except Exception as e:
+#     st.error(f"❌ Failed to load model: {e}")
 
 # Google Drive file keys (from secrets)
 SCALER_KEY = st.secrets["GDRIVE_KEYS"]["SCALER_KEY"]
